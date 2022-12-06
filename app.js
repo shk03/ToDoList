@@ -4,7 +4,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const app = express();
-mongoose.connect("mongodb://localhost:27017/todolistDB", {
+const _ = require('lodash');
+
+
+mongoose.connect("mongodb+srv://admin-shkim:XGMXJuKwi8CZ5E6E@cluster0.jymmoou.mongodb.net/todolistDB", {
   useNewUrlParser: true,
 });
 
@@ -60,7 +63,7 @@ app.get("/", function (req, res) {
 });
 
 app.get("/:customListName", function(req, res) {
-  const customListName = req.params.customListName;
+  const customListName = _.capitalize(req.params.customListName);
 
   List.findOne({name: customListName}, function(err, foundList) {
     if (!err) {
@@ -81,7 +84,7 @@ app.get("/:customListName", function(req, res) {
 
 app.post("/", function (req, res) {
   const itemName = req.body.newItem;
-  const listName = req.body.list;
+  const listName = _.capitalize(req.body.list);
 
   const item = new Item({
     name: itemName
@@ -101,7 +104,7 @@ app.post("/", function (req, res) {
 
 app.post("/delete", function(req, res) {
   const checkedItemId = req.body.checkbox;
-  const listItem = req.body.listName;
+  const listItem = _.capitalize(req.body.listName);
 
   if (listItem === "Today") {
     Item.findOneAndRemove({_id: checkedItemId}, function(err) {
